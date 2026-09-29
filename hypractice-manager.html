@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>⚾ Practice Planner</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+    font-family:'Zen Maru Gothic',sans-serif;
+
+    background:
+    repeating-linear-gradient(
+        90deg,
+        #ffffff 0px,
+        #ffffff 18px,
+        #f3f3f3 18px,
+        #f3f3f3 20px
+    );
+
+    margin:15px;
+    color:#222;
+}
+
+h1{
+    text-align:center;
+    color:#111;
+    border-bottom:4px solid #111;
+    padding-bottom:10px;
+    margin-bottom:20px;
+    letter-spacing:2px;
+}
+
+.card,
+.history,
+.coach-view{
+    background:white;
+    border:2px solid #111;
+    border-radius:16px;
+    padding:15px;
+    box-shadow:4px 4px 0px #111;
+    margin-bottom:15px;
+}
+
+input,
+select{
+    width:100%;
+    padding:6px;
+    box-sizing:border-box;
+    border:1px solid #444;
+    border-radius:6px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th{
+    background:#111;
+    color:white;
+    padding:8px;
+}
+
+td{
+    border:1px solid #ccc;
+    padding:4px;
+}
+
+.time{
+    background:#f5f5f5;
+    font-weight:bold;
+    width:90px;
+}
+
+button{
+    width:48%;
+    max-width:120px;
+    height:42px;
+
+    border:none;
+    border-radius:999px;
+
+    color:white;
+    font-weight:bold;
+
+    margin:3px;
+    cursor:pointer;
+}
+
+
+.save{
+    background:#111;
+}
+
+.copy{
+    background:#444;
+}
+
+.view{
+    background:#222;
+}
+
+.print{
+    background:#000;
+}
+
+.clear{
+    background:#a00000;
+}
+
+.history-item{
+    padding:8px;
+    border-bottom:1px solid #eee;
+    cursor:pointer;
+}
+
+.history-item:hover{
+    background:#f5f5f5;
+}
+
+.coach-view{
+    display:none;
+}
+
+.coach-view h2{
+    color:#111;
+    border-bottom:3px solid #111;
+    padding-bottom:8px;
+}
+
+.coach-row{
+    display:flex;
+    padding:6px 0;
+    border-bottom:1px solid #eee;
+}
+
+.coach-time{
+    width:80px;
+    font-weight:bold;
+}
+
+
+
+
+
+/* 折りたたみ */
+
+details{
+    background:white;
+    border:2px solid #111;
+    border-radius:12px;
+    padding:10px;
+    margin-bottom:10px;
+    box-shadow:3px 3px 0px #111;
+}
+
+summary{
+    font-size:1.1em;
+    font-weight:bold;
+    cursor:pointer;
+}
+.reset{
+    background:#666;
+}
+/* 印刷 */
+
+@media print {
+
+    .card,
+    .history,
+    button,
+    details{
+        display:none !important;
+    }
+
+    .coach-view{
+        display:block !important;
+        box-shadow:none;
+        border:none;
+        margin:0;
+        padding:0;
+    }
+
+    body{
+        background:white;
+        margin:10mm;
+    }
+
+    h1{
+        display:none;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>
+⚾ YANKEES ⚾
+<br>
+練習メニュー
+</h1>
+
+<div class="card">
+
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+
+<div style="flex:1">
+練習日<br>
+<input type="date" id="practiceDate">
+</div>
+
+<div style="flex:1">
+練習場所<br>
+<input type="text" id="place" value="ヤングラ">
+</div>
+
+</div>
+
+<br><br>
+
+<button class="view" onclick="showCoachView()">⚾コーチ用</button>
+
+<button class="print" onclick="printCoachView()">🖨PDF</button>
+
+<button class="save" onclick="savePractice()">〇保　存</button>
+
+<button class="copy" onclick="copyLatest()">⧉前回コピー</button>
+
+
+<button class="reset" onclick="clearMenus()">✖練習クリア</button>
+<button class="clear" onclick="clearHistory()">✖履歴クリア</button>
+
+</div>
+
+<div class="coach-view" id="coachView">
+
+<h2>⚾コーチ用</h2>
+
+<div id="coachContent"></div>
+
+</div>
+
+<details open>
+
+<summary>
+⚾ AM 午前の練習（7:00～12:00）
+</summary>
+
+<table id="amTable">
+
+<tr>
+<th>時間</th>
+<th>メニュー</th>
+<th>担当</th>
+</tr>
+
+</table>
+
+</details>
+
+<details>
+
+<summary>
+⚾ PM 午後の練習（12:00～20:00）
+</summary>
+
+<table id="pmTable">
+
+<tr>
+<th>時間</th>
+<th>メニュー</th>
+<th>担当</th>
+</tr>
+
+</table>
+
+</details>
+
+<div class="history">
+
+<h2>📚履歴</h2>
+
+<div id="historyList"></div>
+
+</div>
+
+
+<script>const menuList=[
+
+'',
+
+'■■ ウォーミングアップ ■■',
+'グラウンド整備',
+'ダッシュ',
+'ラダー',
+'ストレッチ',
+'体操',
+
+'■■ キャッチボール ■■',
+'キャッチボール',
+'ショートキャッチ',
+'ロングキャッチ',
+
+'■■ 守備 ■■',
+'ゴロ捕球',
+'フライ捕球',
+'内野ノック',
+'外野ノック',
+'シートノック',
+'ケースノック',
+
+'■■ 打撃 ■■',
+'ティーバッティング',
+'ロングティー',
+'フリーバッティング',
+'バント練習',
+
+'■■ 走塁 ■■',
+'走塁練習',
+'盗塁練習',
+'ホーム突入',
+
+'■■ バッテリー ■■',
+'投手練習',
+'捕手練習',
+'バッテリー練習',
+
+'■■ 実戦 ■■',
+'ケース練習',
+'紅白戦',
+'練習試合',
+
+'■■ その他 ■■',
+'ミーティング',
+'休憩',
+'給水',
+'移動',
+'片付け',
+'お楽しみ会'
+
+];
+
+function createTable(){
+
+    const amTable =
+    document.getElementById('amTable');
+
+    const pmTable =
+    document.getElementById('pmTable');
+
+    let h=7;
+    let m=0;
+
+    while(h<20){
+
+        let o='';
+
+        menuList.forEach(x=>{
+
+            if(x.startsWith('■■')){
+                o += `<option disabled>${x}</option>`;
+            }else{
+                o += `<option>${x}</option>`;
+            }
+
+        });
+
+        const r=document.createElement('tr');
+
+        r.innerHTML=`
+        <td class="time">
+        ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}
+        </td>
+
+        <td>
+        <select class="menu">
+        ${o}
+        </select>
+        </td>
+
+        <td>
+        <input class="coach">
+        </td>
+        `;
+
+        if(h < 12){
+            amTable.appendChild(r);
+        }else{
+            pmTable.appendChild(r);
+        }
+
+        m += 15;
+
+        if(m === 60){
+            m = 0;
+            h++;
+        }
+    }
+}
+
+createTable();
+
+practiceDate.value =
+new Date().toISOString().split('T')[0];
+
+function getRows(){
+
+    return [
+
+        ...document.querySelectorAll('#amTable tr'),
+        ...document.querySelectorAll('#pmTable tr')
+
+    ].filter(r=>r.querySelector('.menu'));
+
+}
+
+function savePractice(){
+
+    const data =
+    JSON.parse(
+        localStorage.getItem('practiceData') || '[]'
+    );
+
+    const rows = getRows();
+
+    const schedule = rows.map(r=>({
+
+        time:
+        r.querySelector('.time').innerText,
+
+        menu:
+        r.querySelector('.menu').value,
+
+        coach:
+        r.querySelector('.coach').value
+
+    }));
+
+    data.push({
+
+        date:practiceDate.value,
+        place:place.value,
+        schedule:schedule
+
+    });
+
+    localStorage.setItem(
+        'practiceData',
+        JSON.stringify(data)
+    );
+
+    loadHistory();
+
+    alert('保存しました');
+
+}
+
+function loadHistory(){
+
+    const data =
+    JSON.parse(
+        localStorage.getItem('practiceData') || '[]'
+    );
+
+    historyList.innerHTML='';
+
+    data.slice().reverse().forEach(x=>{
+
+        const e =
+        document.createElement('div');
+
+        e.className='history-item';
+
+        e.textContent =
+        `⚾ ${x.date} ${x.place}`;
+
+        e.onclick =
+        ()=>loadPractice(x);
+
+        historyList.appendChild(e);
+
+    });
+
+}
+
+function loadPractice(x){
+
+    practiceDate.value = x.date;
+    place.value = x.place;
+
+    const rows = getRows();
+
+    x.schedule.forEach((s,i)=>{
+
+        if(!rows[i]) return;
+
+        rows[i].querySelector('.menu').value =
+        s.menu;
+
+        rows[i].querySelector('.coach').value =
+        s.coach;
+
+    });
+
+}
+
+function copyLatest(){
+
+    const d =
+    JSON.parse(
+        localStorage.getItem('practiceData') || '[]'
+    );
+
+    if(!d.length){
+
+        alert('履歴がありません');
+
+        return;
+    }
+
+    loadPractice(d[d.length-1]);
+
+    practiceDate.value='';
+
+    alert(
+      '前回をコピーしました。日付を入力してください。'
+    );
+
+}
+
+function clearMenus(){
+
+    const rows = getRows();
+
+    rows.forEach(r=>{
+
+        r.querySelector('.menu').selectedIndex = 0;
+
+        r.querySelector('.coach').value = '';
+
+    });
+
+    practiceDate.value =
+    new Date().toISOString().split('T')[0];
+
+    place.value = 'ヤングラ';
+
+    coachContent.innerHTML='';
+
+    coachView.style.display='none';
+
+}
+
+function clearHistory(){
+
+    localStorage.removeItem('practiceData');
+
+    historyList.innerHTML='';
+
+    alert('履歴を削除しました');
+
+}
+
+
+function showCoachView(){
+
+    const d = new Date(practiceDate.value);
+
+const week = [
+"日","月","火","水","木","金","土"
+];
+
+const day =
+week[d.getDay()];
+
+let html = `
+
+<div style="
+background:#111;
+color:white;
+padding:10px 12px;
+border-radius:10px;
+margin-bottom:12px;
+text-align:center;
+font-weight:bold;
+">
+練習メニュー｜
+📅 ${practiceDate.value}（${day}）
+｜
+📍 ${place.value}
+
+</div>
+
+`;
+    const rows = getRows();
+
+    rows.forEach(r=>{
+
+        const m =
+        r.querySelector('.menu').value;
+
+        if(!m) return;
+
+        html += `
+        <div class="coach-row">
+
+            <div class="coach-time">
+            ${r.querySelector('.time').innerText}
+            </div>
+
+           <div>
+${m}
+</div>
+
+        </div>
+        `;
+
+    });
+
+    coachContent.innerHTML = html;
+
+    coachView.style.display='block';
+
+    document
+    .querySelectorAll("details")
+    .forEach(x=>x.removeAttribute("open"));
+
+    coachView.scrollIntoView({
+        behavior:'smooth',
+        block:'start'
+    });
+
+}
+
+function printCoachView(){
+
+    showCoachView();
+
+    setTimeout(function(){
+
+        window.print();
+
+    },300);
+
+}
+
+loadHistory();
+</script>
+<br><br>
+</body>
+</html>
