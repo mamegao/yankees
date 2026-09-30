@@ -10,6 +10,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 
 <style>
+/* 1. すべての要素に box-sizing を適用 */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 :root {
   --primary: #1e293b;
   --accent: #2563eb;
@@ -27,7 +32,6 @@ body {
   margin: 0;
   padding: 16px;
   color: var(--text);
-  box-sizing: border-box;
 }
 
 .container {
@@ -69,13 +73,16 @@ h1 {
   gap: 6px;
   font-weight: 700;
   font-size: 0.9rem;
+  min-width: 0; /* Grid内での要素飛び出しを抑止 */
 }
 
+/* 2. input, select が親幅を超えないように設定 */
 input, select {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   height: 44px;
   padding: 8px 12px;
-  box-sizing: border-box;
   border: 2px solid #cbd5e1;
   border-radius: 8px;
   font-family: inherit;
@@ -83,6 +90,12 @@ input, select {
   font-size: 0.95rem;
   background: #fff;
   transition: border-color 0.2s;
+}
+
+/* スマホにおける日付入力欄のブラウザ独自スタイル崩れ防止 */
+input[type="date"] {
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 input:focus, select:focus {
@@ -142,6 +155,12 @@ summary {
   font-weight: 700;
   cursor: pointer;
   user-select: none;
+}
+
+/* 表が画面幅を飛び出さないためのスクロール対応 */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
 }
 
 table {
@@ -336,9 +355,27 @@ td {
   }
 }
 
+/* スマホ表示向け微調整 */
 @media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
   .top-info {
     grid-template-columns: 1fr;
+  }
+
+  .coach-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .coach-time {
+    width: 100%;
   }
 }
 </style>
@@ -378,32 +415,36 @@ td {
 
   <details open>
     <summary>⚾ AM 午前（07:00～12:00）</summary>
-    <table id="amTable">
-      <thead>
-        <tr>
-          <th>時間</th>
-          <th>練習メニュー</th>
-          <th>担当</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-container">
+      <table id="amTable">
+        <thead>
+          <tr>
+            <th>時間</th>
+            <th>練習メニュー</th>
+            <th>担当</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </details>
 
   <details>
     <summary>⚾ PM 午後（12:00～20:00）</summary>
-    <table id="pmTable">
-      <thead>
-        <tr>
-          <th>時間</th>
-          <th>練習メニュー</th>
-          <th>担当</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-container">
+      <table id="pmTable">
+        <thead>
+          <tr>
+            <th>時間</th>
+            <th>練習メニュー</th>
+            <th>担当</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </details>
 
   <div class="history">
