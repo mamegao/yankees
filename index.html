@@ -1,662 +1,728 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>⚾ Practice Planner</title>
+<title>⚾ Practice Planner Pro</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 
 <style>
-body{
-    font-family:'Zen Maru Gothic',sans-serif;
-
-    background:
-    repeating-linear-gradient(
-        90deg,
-        #ffffff 0px,
-        #ffffff 18px,
-        #f3f3f3 18px,
-        #f3f3f3 20px
-    );
-
-    margin:15px;
-    color:#222;
+:root {
+  --primary: #1e293b;
+  --accent: #2563eb;
+  --line-green: #06C755;
+  --bg-pattern: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --text: #0f172a;
 }
 
-h1{
-    text-align:center;
-    color:#111;
-    border-bottom:4px solid #111;
-    padding-bottom:10px;
-    margin-bottom:20px;
-    letter-spacing:2px;
+body {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  background-color: var(--bg-pattern);
+  background-image: repeating-linear-gradient(45deg, #f1f5f9 0, #f1f5f9 10px, transparent 0, transparent 50px);
+  margin: 0;
+  padding: 16px;
+  color: var(--text);
+  box-sizing: border-box;
 }
 
-.card,
-.history,
-.coach-view{
-    background:white;
-    border:2px solid #111;
-    border-radius:16px;
-    padding:15px;
-    box-shadow:4px 4px 0px #111;
-    margin-bottom:15px;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-input,
-select{
-    width:100%;
-    padding:6px;
-    box-sizing:border-box;
-    border:1px solid #444;
-    border-radius:6px;
+h1 {
+  text-align: center;
+  color: var(--primary);
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin: 10px 0 20px;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
+.card {
+  background: var(--card-bg);
+  border: 2px solid var(--primary);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 4px 4px 0px var(--primary);
+  margin-bottom: 20px;
 }
 
-th{
-    background:#111;
-    color:white;
-    padding:8px;
+.top-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
-td{
-    border:1px solid #ccc;
-    padding:4px;
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
 }
 
-.time{
-    background:#f5f5f5;
-    font-weight:bold;
-    width:90px;
+input, select {
+  width: 100%;
+  height: 44px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: #fff;
+  transition: border-color 0.2s;
 }
 
-button{
-    width:48%;
-    max-width:120px;
-    height:42px;
-
-    border:none;
-    border-radius:999px;
-
-    color:white;
-    font-weight:bold;
-
-    margin:3px;
-    cursor:pointer;
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
-
-.save{
-    background:#111;
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 16px;
 }
 
-.copy{
-    background:#444;
+button {
+  width: 100%;
+  height: 46px;
+  border: 2px solid var(--primary);
+  border-radius: 12px;
+  color: white;
+  font-weight: 700;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.1s ease;
 }
 
-.view{
-    background:#222;
+button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--primary);
 }
 
-.print{
-    background:#000;
+.btn-view { background: #3b82f6; }
+.btn-line { background: var(--line-green); }
+.btn-print { background: #0f172a; }
+.btn-save { background: #16a34a; }
+.btn-copy { background: #d97706; }
+.btn-reset { background: #64748b; }
+.btn-clear { background: #dc2626; grid-column: span 2; }
+
+details {
+  background: white;
+  border: 2px solid var(--primary);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+  box-shadow: 3px 3px 0px var(--primary);
 }
 
-.clear{
-    background:#a00000;
+summary {
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
 }
 
-.history-item{
-    padding:8px;
-    border-bottom:1px solid #eee;
-    cursor:pointer;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
 }
 
-.history-item:hover{
-    background:#f5f5f5;
+th {
+  background: var(--primary);
+  color: white;
+  padding: 8px;
+  font-size: 0.85rem;
 }
 
-.coach-view{
-    display:none;
+td {
+  border: 1px solid #e2e8f0;
+  padding: 4px;
 }
 
-.coach-view h2{
-    color:#111;
-    border-bottom:3px solid #111;
-    padding-bottom:8px;
+.time-col {
+  background: #f8fafc;
+  font-weight: 700;
+  text-align: center;
+  width: 70px;
+  font-size: 0.85rem;
 }
 
-.coach-row{
-    display:flex;
-    padding:6px 0;
-    border-bottom:1px solid #eee;
+.action-col {
+  width: 50px;
+  text-align: center;
 }
 
-.coach-time{
-    width:80px;
-    font-weight:bold;
+.btn-extend {
+  height: 32px;
+  width: 100%;
+  padding: 0;
+  font-size: 0.75rem;
+  background: #e2e8f0;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  box-shadow: none;
+  border-radius: 6px;
 }
 
-
-
-
-
-/* 折りたたみ */
-
-details{
-    background:white;
-    border:2px solid #111;
-    border-radius:12px;
-    padding:10px;
-    margin-bottom:10px;
-    box-shadow:3px 3px 0px #111;
+.coach-view {
+  display: none;
+  background: white;
+  border: 2px solid var(--primary);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 4px 4px 0px var(--primary);
+  margin-bottom: 20px;
 }
 
-summary{
-    font-size:1.1em;
-    font-weight:bold;
-    cursor:pointer;
+.coach-header {
+  background: var(--primary);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 16px;
+  font-size: 1.05rem;
 }
-.reset{
-    background:#666;
+
+.coach-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed #cbd5e1;
+  gap: 12px;
 }
-/* 印刷 */
+
+.coach-time {
+  width: 130px;
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.coach-menu {
+  flex: 1;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.coach-name {
+  width: 90px;
+  text-align: right;
+  font-weight: 700;
+  background: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+/* 履歴 */
+.history {
+  background: white;
+  border: 2px solid var(--primary);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 4px 4px 0px var(--primary);
+}
+
+.history h2 {
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 6px;
+}
+
+.history-item {
+  padding: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  cursor: pointer;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 6px;
+}
+
+.history-item:hover {
+  background: #f1f5f9;
+}
 
 @media print {
+  @page {
+    size: auto;
+    margin: 10mm;
+  }
+  
+  .card, .history, button, details, h1 {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    padding: 0 !important;
+    font-size: 14pt;
+  }
+  
+  .coach-view {
+    display: block !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
 
-    .card,
-    .history,
-    button,
-    details{
-        display:none !important;
-    }
+  .coach-header {
+    background: #1e293b !important;
+    color: white !important;
+    font-size: 1.6rem !important;
+    padding: 14px !important;
+    border-radius: 8px !important;
+    margin-bottom: 20px !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 
-    .coach-view{
-        display:block !important;
-        box-shadow:none;
-        border:none;
-        margin:0;
-        padding:0;
-    }
+  .coach-row {
+    padding: 12px 6px !important;
+    border-bottom: 2px solid #94a3b8 !important;
+    gap: 16px !important;
+  }
 
-    body{
-        background:white;
-        margin:10mm;
-    }
+  .coach-time {
+    width: 180px !important;
+    font-size: 1.35rem !important;
+    color: #1e3a8a !important;
+    font-weight: 900 !important;
+  }
 
-    h1{
-        display:none;
-    }
+  .coach-menu {
+    font-size: 1.4rem !important;
+    font-weight: 900 !important;
+    color: #0f172a !important;
+  }
+
+  .coach-name {
+    width: 140px !important;
+    font-size: 1.2rem !important;
+    background: #f1f5f9 !important;
+    padding: 6px 10px !important;
+    border: 1px solid #cbd5e1 !important;
+    text-align: center !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+@media (max-width: 600px) {
+  .top-info {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
-
 </head>
-
 <body>
 
-<h1>
-⚾ YANKEES ⚾
-<br>
-練習メニュー
-</h1>
+<div class="container">
+  <h1>⚾ YANKEES 練習計画 ⚾</h1>
 
-<div class="card">
+  <div class="card">
+    <div class="top-info">
+      <div class="field-group">
+        <label for="practiceDate">📅 練習日</label>
+        <input type="date" id="practiceDate">
+      </div>
+      <div class="field-group">
+        <label for="place">📍 練習場所</label>
+        <input type="text" id="place" value="ヤングラ">
+      </div>
+    </div>
 
-<div style="display:flex;gap:10px;flex-wrap:wrap">
+    <div class="button-grid">
+      <button class="btn-view" onclick="showCoachView()">⚾ コーチ用確認</button>
+      <button class="btn-line" onclick="copyCoachMenu()">📋 LINE共有用コピー</button>
+      <button class="btn-print" onclick="printCoachView()">🖨 印刷画面</button>
+      <button class="btn-save" onclick="savePractice()">💾 予定を保存</button>
+      <button class="btn-copy" onclick="copyLatest()">⧉ 前回を複製</button>
+      <button class="btn-reset" onclick="clearMenus()">🧹 枠のクリア</button>
+      <button class="btn-clear" onclick="clearHistory()">🗑 履歴消去</button>
+    </div>
+  </div>
 
-<div style="flex:1">
-練習日<br>
-<input type="date" id="practiceDate">
+  <!-- コーチ用表示エリア -->
+  <div class="coach-view" id="coachView">
+    <div id="coachContent"></div>
+  </div>
+
+  <details open>
+    <summary>⚾ AM 午前（07:00～12:00）</summary>
+    <table id="amTable">
+      <thead>
+        <tr>
+          <th>時間</th>
+          <th>練習メニュー</th>
+          <th>担当</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </details>
+
+  <details>
+    <summary>⚾ PM 午後（12:00～20:00）</summary>
+    <table id="pmTable">
+      <thead>
+        <tr>
+          <th>時間</th>
+          <th>練習メニュー</th>
+          <th>担当</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </details>
+
+  <div class="history">
+    <h2>📚 保存履歴</h2>
+    <div id="historyList"></div>
+  </div>
 </div>
 
-<div style="flex:1">
-練習場所<br>
-<input type="text" id="place" value="ヤングラ">
-</div>
-
-</div>
-
-<br><br>
-
-<button class="view" onclick="showCoachView()">⚾コーチ用</button>
-
-<button class="print" onclick="printCoachView()">🖨PDF</button>
-
-<button class="save" onclick="savePractice()">〇保　存</button>
-
-<button class="copy" onclick="copyLatest()">⧉前回コピー</button>
-
-
-<button class="reset" onclick="clearMenus()">✖練習クリア</button>
-<button class="clear" onclick="clearHistory()">✖履歴クリア</button>
-
-</div>
-
-<div class="coach-view" id="coachView">
-
-<h2>⚾コーチ用</h2>
-
-<div id="coachContent"></div>
-
-</div>
-
-<details open>
-
-<summary>
-⚾ AM 午前の練習（7:00～12:00）
-</summary>
-
-<table id="amTable">
-
-<tr>
-<th>時間</th>
-<th>メニュー</th>
-<th>担当</th>
-</tr>
-
-</table>
-
-</details>
-
-<details>
-
-<summary>
-⚾ PM 午後の練習（12:00～20:00）
-</summary>
-
-<table id="pmTable">
-
-<tr>
-<th>時間</th>
-<th>メニュー</th>
-<th>担当</th>
-</tr>
-
-</table>
-
-</details>
-
-<div class="history">
-
-<h2>📚履歴</h2>
-
-<div id="historyList"></div>
-
-</div>
-
-
-<script>const menuList=[
-
-'',
-
-'■■ ウォーミングアップ ■■',
-'グラウンド整備',
-'ダッシュ',
-'ラダー',
-'ストレッチ',
-'体操',
-
-'■■ キャッチボール ■■',
-'キャッチボール',
-'ショートキャッチ',
-'ロングキャッチ',
-
-'■■ 守備 ■■',
-'ゴロ捕球',
-'フライ捕球',
-'内野ノック',
-'外野ノック',
-'シートノック',
-'ケースノック',
-
-'■■ 打撃 ■■',
-'ティーバッティング',
-'ロングティー',
-'フリーバッティング',
-'バント練習',
-
-'■■ 走塁 ■■',
-'走塁練習',
-'盗塁練習',
-'ホーム突入',
-
-'■■ バッテリー ■■',
-'投手練習',
-'捕手練習',
-'バッテリー練習',
-
-'■■ 実戦 ■■',
-'ケース練習',
-'紅白戦',
-'練習試合',
-
-'■■ その他 ■■',
-'ミーティング',
-'休憩',
-'給水',
-'移動',
-'片付け',
-'お楽しみ会'
-
+<script>
+const menuList = [
+  '',
+  '■■ ウォーミングアップ ■■', 'グラウンド整備', 'ダッシュ', '体操 ストレッチ', 'ラダー',
+  '■■ キャッチボール ■■', 'キャッチボール', 'ショートキャッチ', 'ロングキャッチ',
+  '■■ 内野 ■■', 'グラブの出し方（内野）', 'コーン（内野）', 'ゴロ（内野）', 'タッチ（内野）', 'ノック（内野）', 'フライの取り方（内野）', '左右取り方（内野）', '投げ方（内野）', '捕球姿勢（内野）', '連続捕球（内野）',
+  '■■ 外野 ■■', 'コーン（外野）', 'ゴロ（外野）', 'ノック（外野）', 'フライの取り方（外野）', '投げ方（外野）', '捕球姿勢（外野）',
+  '■■ 打撃 ■■', 'トスバッティング（ペッパー）', 'ロングティー', '１本打ち', '素振り',
+  '■■ 走塁 ■■', 'ベースランニング', 'リード', '盗塁',
+  '■■ ピッチャー ■■', '牽制練習', '投球練習',
+  '■■ キャッチャー ■■', '捕球練習', '捕殺練習',
+  '■■ 全体守備 ■■', 'ノック', '内外野連携練習',
+  '■■ 実戦 ■■', 'ケース打撃・守備', '紅白戦', '練習試合',
+  '■■ その他 ■■', 'ミーティング', '休憩', '軽食', '移動', '片付け', 'お楽しみ会'
 ];
 
-function createTable(){
+function createTable() {
+  const amBody = document.querySelector('#amTable tbody');
+  const pmBody = document.querySelector('#pmTable tbody');
 
-    const amTable =
-    document.getElementById('amTable');
+  let h = 7, m = 0;
 
-    const pmTable =
-    document.getElementById('pmTable');
+  const optionHtml = menuList.map(x => 
+    x.startsWith('■■') ? `<option disabled>${x}</option>` : `<option value="${x}">${x}</option>`
+  ).join('');
 
-    let h=7;
-    let m=0;
+  while (h < 20) {
+    const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    const tr = document.createElement('tr');
+    tr.dataset.time = timeStr;
 
-    while(h<20){
+    tr.innerHTML = `
+      <td class="time-col">${timeStr}</td>
+      <td><select class="menu">${optionHtml}</select></td>
+      <td><input type="text" class="coach" placeholder="担当者"></td>
+      <td class="action-col">
+        <button type="button" class="btn-extend" onclick="copyToNextRow(this)" title="下の枠へ複写">↓15分</button>
+      </td>
+    `;
 
-        let o='';
-
-        menuList.forEach(x=>{
-
-            if(x.startsWith('■■')){
-                o += `<option disabled>${x}</option>`;
-            }else{
-                o += `<option>${x}</option>`;
-            }
-
-        });
-
-        const r=document.createElement('tr');
-
-        r.innerHTML=`
-        <td class="time">
-        ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}
-        </td>
-
-        <td>
-        <select class="menu">
-        ${o}
-        </select>
-        </td>
-
-        <td>
-        <input class="coach">
-        </td>
-        `;
-
-        if(h < 12){
-            amTable.appendChild(r);
-        }else{
-            pmTable.appendChild(r);
-        }
-
-        m += 15;
-
-        if(m === 60){
-            m = 0;
-            h++;
-        }
+    if (h < 12) {
+      amBody.appendChild(tr);
+    } else {
+      pmBody.appendChild(tr);
     }
+
+    m += 15;
+    if (m === 60) { m = 0; h++; }
+  }
+}
+
+function copyToNextRow(btn) {
+  const currentRow = btn.closest('tr');
+  const nextRow = currentRow.nextElementSibling || getNextTableFirstRow(currentRow);
+  
+  if (nextRow) {
+    nextRow.querySelector('.menu').value = currentRow.querySelector('.menu').value;
+    nextRow.querySelector('.coach').value = currentRow.querySelector('.coach').value;
+  }
+}
+
+function getNextTableFirstRow(row) {
+  if (row.closest('table').id === 'amTable') {
+    return document.querySelector('#pmTable tbody tr');
+  }
+  return null;
+}
+
+function getRows() {
+  return Array.from(document.querySelectorAll('tbody tr'));
+}
+
+function getDayOfWeekStr(dateVal) {
+  if (!dateVal) return '';
+  const parts = dateVal.split('-');
+  if (parts.length === 3) {
+    const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    if (!isNaN(d.getTime())) {
+      return ["日","月","火","水","木","金","土"][d.getDay()];
+    }
+  }
+  return '';
+}
+
+function add15Mins(timeStr) {
+  if (!timeStr) return "00:00";
+  const parts = timeStr.split(':');
+  if (parts.length !== 2) return "00:00";
+  
+  let h = parseInt(parts[0], 10);
+  let m = parseInt(parts[1], 10);
+  
+  if (isNaN(h) || isNaN(m)) return "00:00";
+  
+  m += 15;
+  if (m >= 60) {
+    m = 0;
+    h++;
+  }
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+function getGroupedSchedule() {
+  const rows = getRows();
+  const schedule = [];
+
+  rows.forEach(r => {
+    const menuSelect = r.querySelector('.menu');
+    const coachInput = r.querySelector('.coach');
+    const time = r.dataset.time || (r.querySelector('.time-col') ? r.querySelector('.time-col').textContent.trim() : '');
+
+    if (!menuSelect || !time) return;
+
+    const menu = menuSelect.value;
+    const coach = coachInput ? coachInput.value.trim() : '';
+
+    if (menu && menu !== "") {
+      schedule.push({ time, menu, coach });
+    }
+  });
+
+  if (schedule.length === 0) return [];
+
+  const merged = [];
+  let current = null;
+
+  schedule.forEach((item) => {
+    const endTime = add15Mins(item.time);
+    
+    if (!current) {
+      current = { start: item.time, end: endTime, menu: item.menu, coach: item.coach };
+    } else if (current.menu === item.menu && current.coach === item.coach && current.end === item.time) {
+      current.end = endTime;
+    } else {
+      merged.push(current);
+      current = { start: item.time, end: endTime, menu: item.menu, coach: item.coach };
+    }
+  });
+
+  if (current) merged.push(current);
+
+  return merged;
+}
+
+function showCoachView() {
+  const dateVal = document.getElementById('practiceDate').value;
+  const dayStr = getDayOfWeekStr(dateVal);
+  const placeVal = document.getElementById('place').value;
+
+  const grouped = getGroupedSchedule();
+
+  let html = `
+    <div class="coach-header">
+      ⚾ 練習日程｜📅 ${dateVal}${dayStr ? `（${dayStr}）` : ''}｜📍 ${placeVal}
+    </div>
+  `;
+
+  if (grouped.length === 0) {
+    html += `<p style="text-align:center; color:#64748b; font-weight:700; padding:20px;">メニューが選択されていません</p>`;
+  } else {
+    grouped.forEach(item => {
+      html += `
+        <div class="coach-row">
+          <div class="coach-time">${item.start} ～ ${item.end}</div>
+          <div class="coach-menu">${item.menu}</div>
+          <div class="coach-name">${item.coach || 'ー'}</div>
+        </div>
+      `;
+    });
+  }
+
+  const coachView = document.getElementById('coachView');
+  document.getElementById('coachContent').innerHTML = html;
+  coachView.style.display = 'block';
+
+  document.querySelectorAll("details").forEach(x => x.removeAttribute("open"));
+  coachView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyCoachMenu() {
+  const dateVal = document.getElementById('practiceDate').value;
+  const dayStr = getDayOfWeekStr(dateVal);
+  const placeVal = document.getElementById('place').value;
+  const grouped = getGroupedSchedule();
+
+  if (grouped.length === 0) {
+    alert("コピーするメニューがありません。");
+    return;
+  }
+
+  let text = `【⚾ 練習スケジュール】\n`;
+  text += `📅 日時：${dateVal}${dayStr ? `（${dayStr}）` : ''}\n`;
+  text += `📍 場所：${placeVal}\n`;
+  text += `------------------------\n`;
+
+  grouped.forEach(item => {
+    text += `⏱ ${item.start}〜${item.end}\n`;
+    text += ` └ ${item.menu}`;
+    if (item.coach) text += `（担当：${item.coach}）`;
+    text += `\n`;
+  });
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert("LINE共有用にクリップボードへコピーしました！");
+    }).catch(() => {
+      fallbackCopyText(text);
+    });
+  } else {
+    fallbackCopyText(text);
+  }
+}
+
+function fallbackCopyText(text) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    alert("LINE共有用にクリップボードへコピーしました！");
+  } catch (err) {
+    alert("コピーに失敗しました。");
+  }
+  document.body.removeChild(textArea);
+}
+
+function savePractice() {
+  const data = JSON.parse(localStorage.getItem('practiceData') || '[]');
+  const rows = getRows();
+
+  const schedule = rows.map(r => ({
+    time: r.dataset.time,
+    menu: r.querySelector('.menu').value,
+    coach: r.querySelector('.coach').value
+  }));
+
+  data.push({
+    date: document.getElementById('practiceDate').value,
+    place: document.getElementById('place').value,
+    schedule: schedule
+  });
+
+  localStorage.setItem('practiceData', JSON.stringify(data));
+  loadHistory();
+  alert('スケジュールを保存しました');
+}
+
+function loadHistory() {
+  const data = JSON.parse(localStorage.getItem('practiceData') || '[]');
+  const historyList = document.getElementById('historyList');
+  historyList.innerHTML = '';
+
+  data.slice().reverse().forEach((x) => {
+    const e = document.createElement('div');
+    e.className = 'history-item';
+    const dayStr = getDayOfWeekStr(x.date);
+    e.innerHTML = `<span>⚾ ${x.date} ${dayStr ? `(${dayStr})` : ''}</span><span>${x.place}</span>`;
+    e.onclick = () => loadPractice(x);
+    historyList.appendChild(e);
+  });
+}
+
+function loadPractice(x) {
+  document.getElementById('practiceDate').value = x.date;
+  document.getElementById('place').value = x.place;
+  const rows = getRows();
+
+  x.schedule.forEach((s, i) => {
+    if (!rows[i]) return;
+    rows[i].querySelector('.menu').value = s.menu;
+    rows[i].querySelector('.coach').value = s.coach;
+  });
+}
+
+function copyLatest() {
+  const d = JSON.parse(localStorage.getItem('practiceData') || '[]');
+  if (!d.length) {
+    alert('履歴データがありません');
+  } else {
+    loadPractice(d[d.length - 1]);
+    document.getElementById('practiceDate').value = new Date().toISOString().split('T')[0];
+    alert('前回データを読み込みました。日付を確認してください。');
+  }
+}
+
+function clearMenus() {
+  getRows().forEach(r => {
+    r.querySelector('.menu').selectedIndex = 0;
+    r.querySelector('.coach').value = '';
+  });
+  document.getElementById('coachContent').innerHTML = '';
+  document.getElementById('coachView').style.display = 'none';
+}
+
+function clearHistory() {
+  if (confirm('保存履歴をすべて消去しますか？')) {
+    localStorage.removeItem('practiceData');
+    loadHistory();
+  }
+}
+
+function printCoachView() {
+  showCoachView();
+  setTimeout(() => window.print(), 300);
 }
 
 createTable();
-
-practiceDate.value =
-new Date().toISOString().split('T')[0];
-
-function getRows(){
-
-    return [
-
-        ...document.querySelectorAll('#amTable tr'),
-        ...document.querySelectorAll('#pmTable tr')
-
-    ].filter(r=>r.querySelector('.menu'));
-
-}
-
-function savePractice(){
-
-    const data =
-    JSON.parse(
-        localStorage.getItem('practiceData') || '[]'
-    );
-
-    const rows = getRows();
-
-    const schedule = rows.map(r=>({
-
-        time:
-        r.querySelector('.time').innerText,
-
-        menu:
-        r.querySelector('.menu').value,
-
-        coach:
-        r.querySelector('.coach').value
-
-    }));
-
-    data.push({
-
-        date:practiceDate.value,
-        place:place.value,
-        schedule:schedule
-
-    });
-
-    localStorage.setItem(
-        'practiceData',
-        JSON.stringify(data)
-    );
-
-    loadHistory();
-
-    alert('保存しました');
-
-}
-
-function loadHistory(){
-
-    const data =
-    JSON.parse(
-        localStorage.getItem('practiceData') || '[]'
-    );
-
-    historyList.innerHTML='';
-
-    data.slice().reverse().forEach(x=>{
-
-        const e =
-        document.createElement('div');
-
-        e.className='history-item';
-
-        e.textContent =
-        `⚾ ${x.date} ${x.place}`;
-
-        e.onclick =
-        ()=>loadPractice(x);
-
-        historyList.appendChild(e);
-
-    });
-
-}
-
-function loadPractice(x){
-
-    practiceDate.value = x.date;
-    place.value = x.place;
-
-    const rows = getRows();
-
-    x.schedule.forEach((s,i)=>{
-
-        if(!rows[i]) return;
-
-        rows[i].querySelector('.menu').value =
-        s.menu;
-
-        rows[i].querySelector('.coach').value =
-        s.coach;
-
-    });
-
-}
-
-function copyLatest(){
-
-    const d =
-    JSON.parse(
-        localStorage.getItem('practiceData') || '[]'
-    );
-
-    if(!d.length){
-
-        alert('履歴がありません');
-
-        return;
-    }
-
-    loadPractice(d[d.length-1]);
-
-    practiceDate.value='';
-
-    alert(
-      '前回をコピーしました。日付を入力してください。'
-    );
-
-}
-
-function clearMenus(){
-
-    const rows = getRows();
-
-    rows.forEach(r=>{
-
-        r.querySelector('.menu').selectedIndex = 0;
-
-        r.querySelector('.coach').value = '';
-
-    });
-
-    practiceDate.value =
-    new Date().toISOString().split('T')[0];
-
-    place.value = 'ヤングラ';
-
-    coachContent.innerHTML='';
-
-    coachView.style.display='none';
-
-}
-
-function clearHistory(){
-
-    localStorage.removeItem('practiceData');
-
-    historyList.innerHTML='';
-
-    alert('履歴を削除しました');
-
-}
-
-
-function showCoachView(){
-
-    const d = new Date(practiceDate.value);
-
-const week = [
-"日","月","火","水","木","金","土"
-];
-
-const day =
-week[d.getDay()];
-
-let html = `
-
-<div style="
-background:#111;
-color:white;
-padding:10px 12px;
-border-radius:10px;
-margin-bottom:12px;
-text-align:center;
-font-weight:bold;
-">
-練習メニュー｜
-📅 ${practiceDate.value}（${day}）
-｜
-📍 ${place.value}
-
-</div>
-
-`;
-    const rows = getRows();
-
-    rows.forEach(r=>{
-
-        const m =
-        r.querySelector('.menu').value;
-
-        if(!m) return;
-
-        html += `
-        <div class="coach-row">
-
-            <div class="coach-time">
-            ${r.querySelector('.time').innerText}
-            </div>
-
-           <div>
-${m}
-</div>
-
-        </div>
-        `;
-
-    });
-
-    coachContent.innerHTML = html;
-
-    coachView.style.display='block';
-
-    document
-    .querySelectorAll("details")
-    .forEach(x=>x.removeAttribute("open"));
-
-    coachView.scrollIntoView({
-        behavior:'smooth',
-        block:'start'
-    });
-
-}
-
-function printCoachView(){
-
-    showCoachView();
-
-    setTimeout(function(){
-
-        window.print();
-
-    },300);
-
-}
-
+document.getElementById('practiceDate').value = new Date().toISOString().split('T')[0];
 loadHistory();
 </script>
-<br><br>
+
 </body>
 </html>
